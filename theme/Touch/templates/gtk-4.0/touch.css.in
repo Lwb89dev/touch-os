@@ -1,0 +1,939 @@
+/*
+ * Touch OS — GTK 4 / libadwaita
+ *
+ * Fatto per essere toccato: ogni cosa che risponde a un dito è alta almeno 44–48px, le righe 64px, e i margini
+ * tra bersagli vicini sono larghi abbastanza da non sbagliare. Le superfici sono riempimenti morbidi (niente
+ * bordi da 1px: i bordi sono per chi ha un puntatore), con angoli grandi e ombre solo per ciò che galleggia.
+ * Lo stato che conta è :active (il dito è giù): il rimbalzo visivo conferma il tocco.
+ *
+ * Chiaro e scuro seguono lo schema di sistema (@media prefers-color-scheme).
+ *
+ * Le app libadwaita ignorano il tema e leggono solo ~/.config/gtk-4.0/gtk.css: l'installer lo fa
+ * puntare a questo file. Priorità USER: batte libadwaita a prescindere dalla specificità.
+ */
+
+/* ════════════════════════════════════════════════════════════════════════
+   1. Palette — chiaro
+   ════════════════════════════════════════════════════════════════════════ */
+
+@define-color accent_bg_color {{L:accent}};
+@define-color accent_fg_color {{L:on}};
+@define-color accent_color {{L:accent}};
+@define-color destructive_bg_color {{L:red}};
+@define-color destructive_fg_color #ffffff;
+@define-color destructive_color {{L:red}};
+@define-color success_bg_color {{L:green}};
+@define-color success_fg_color #ffffff;
+@define-color success_color {{L:green}};
+@define-color warning_bg_color {{L:amber}};
+@define-color warning_fg_color #ffffff;
+@define-color warning_color {{L:amber}};
+@define-color error_bg_color {{L:red}};
+@define-color error_fg_color #ffffff;
+@define-color error_color {{L:red}};
+
+@define-color window_bg_color {{L:bg}};
+@define-color window_fg_color {{L:fg}};
+@define-color view_bg_color {{L:view}};
+@define-color view_fg_color {{L:fg}};
+@define-color headerbar_bg_color {{L:bg}};
+@define-color headerbar_fg_color {{L:fg}};
+@define-color headerbar_border_color {{L:line}};
+@define-color headerbar_backdrop_color {{L:bg}};
+@define-color headerbar_shade_color {{L:line}};
+@define-color headerbar_darker_shade_color {{L:line}};
+@define-color sidebar_bg_color {{L:sidebar}};
+@define-color sidebar_fg_color {{L:fg}};
+@define-color sidebar_backdrop_color {{L:sidebar}};
+@define-color sidebar_shade_color {{L:line}};
+@define-color sidebar_border_color {{L:line}};
+@define-color secondary_sidebar_bg_color {{L:sunken}};
+@define-color secondary_sidebar_fg_color {{L:fg}};
+@define-color secondary_sidebar_backdrop_color {{L:sunken}};
+@define-color secondary_sidebar_shade_color {{L:line}};
+@define-color secondary_sidebar_border_color {{L:line}};
+@define-color card_bg_color {{L:surface}};
+@define-color card_fg_color {{L:fg}};
+@define-color card_shade_color {{L:shade/8}};
+@define-color dialog_bg_color {{L:dialog}};
+@define-color dialog_fg_color {{L:fg}};
+@define-color popover_bg_color {{L:dialog}};
+@define-color popover_fg_color {{L:fg}};
+@define-color popover_shade_color {{L:shade/8}};
+@define-color thumbnail_bg_color {{L:surface}};
+@define-color thumbnail_fg_color {{L:fg}};
+@define-color shade_color {{L:shade/8}};
+@define-color scrollbar_outline_color {{L:bg}};
+
+/* ── Palette — scuro ─────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  @define-color accent_bg_color {{D:accent}};
+  @define-color accent_fg_color {{D:on}};
+  @define-color accent_color {{D:accent}};
+  @define-color destructive_bg_color {{D:red}};
+  @define-color destructive_fg_color {{D:deep}};
+  @define-color destructive_color {{D:red}};
+  @define-color success_bg_color {{D:green}};
+  @define-color success_fg_color {{D:deep}};
+  @define-color success_color {{D:green}};
+  @define-color warning_bg_color {{D:amber}};
+  @define-color warning_fg_color {{D:deep}};
+  @define-color warning_color {{D:amber}};
+  @define-color error_bg_color {{D:red}};
+  @define-color error_fg_color {{D:deep}};
+  @define-color error_color {{D:red}};
+
+  @define-color window_bg_color {{D:bg}};
+  @define-color window_fg_color {{D:fg}};
+  @define-color view_bg_color {{D:view}};
+  @define-color view_fg_color {{D:fg}};
+  @define-color headerbar_bg_color {{D:bg}};
+  @define-color headerbar_fg_color {{D:fg}};
+  @define-color headerbar_border_color {{D:line}};
+  @define-color headerbar_backdrop_color {{D:bg}};
+  @define-color headerbar_shade_color {{D:line}};
+  @define-color headerbar_darker_shade_color {{D:line}};
+  @define-color sidebar_bg_color {{D:sidebar}};
+  @define-color sidebar_fg_color {{D:fg}};
+  @define-color sidebar_backdrop_color {{D:sidebar}};
+  @define-color sidebar_shade_color {{D:line}};
+  @define-color sidebar_border_color {{D:line}};
+  @define-color secondary_sidebar_bg_color {{D:sunken}};
+  @define-color secondary_sidebar_fg_color {{D:fg}};
+  @define-color secondary_sidebar_backdrop_color {{D:sunken}};
+  @define-color secondary_sidebar_shade_color {{D:line}};
+  @define-color secondary_sidebar_border_color {{D:line}};
+  @define-color card_bg_color {{D:surface}};
+  @define-color card_fg_color {{D:fg}};
+  @define-color card_shade_color {{D:shade/28}};
+  @define-color dialog_bg_color {{D:dialog}};
+  @define-color dialog_fg_color {{D:fg}};
+  @define-color popover_bg_color {{D:dialog}};
+  @define-color popover_fg_color {{D:fg}};
+  @define-color popover_shade_color {{D:shade/28}};
+  @define-color thumbnail_bg_color {{D:surface}};
+  @define-color thumbnail_fg_color {{D:fg}};
+  @define-color shade_color {{D:shade/28}};
+  @define-color scrollbar_outline_color {{D:bg}};
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   2. Variabili di tema
+   ════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --window-radius: {{radius}}px;
+  --t-field: {{L:field}};
+  --t-raised: {{L:raised}};
+  --t-sunken: {{L:sunken}};
+  --t-line: {{L:line}};
+  --t-outline: {{L:outline}};
+  --t-dim: {{L:fg3}};
+  --t-faint: {{L:fg4}};
+  --t-soft: {{L:soft}};
+  --t-card: {{L:surface}};
+  --t-red: {{L:red}};
+  --t-red-fg: #ffffff;
+  /*{{#shadows}}*/
+  --t-shade-lo: {{L:shade/16}};
+  --t-shade-md: {{L:shade/26}};
+  --t-shade-hi: {{L:shade/36}};
+  /*{{/shadows}}*/
+  /*{{^shadows}}*/
+  --t-shade-lo: transparent;
+  --t-shade-md: transparent;
+  --t-shade-hi: transparent;
+  /*{{/shadows}}*/
+  --border-opacity: 12%;
+  --dim-opacity: 62%;
+  --disabled-opacity: 44%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --t-field: {{D:field}};
+    --t-raised: {{D:raised}};
+    --t-sunken: {{D:sunken}};
+    --t-line: {{D:line}};
+    --t-outline: {{D:outline}};
+    --t-dim: {{D:fg3}};
+    --t-faint: {{D:fg4}};
+    --t-soft: {{D:soft}};
+    --t-card: {{D:surface}};
+    --t-red: {{D:red}};
+    --t-red-fg: {{D:deep}};
+    /*{{#shadows}}*/
+    --t-shade-lo: {{D:shade/30}};
+    --t-shade-md: {{D:shade/44}};
+    --t-shade-hi: {{D:shade/58}};
+    /*{{/shadows}}*/
+  }
+}
+
+/* La priorità USER di questo file batte il «raggio zero» che libadwaita dà alle finestre massimizzate:
+   lo si ridichiara qui, altrimenti una finestra a schermo pieno resterebbe con gli angoli tondi. */
+window.maximized,
+window.fullscreen,
+window.tiled,
+window.tiled-top,
+window.tiled-left,
+window.tiled-right,
+window.tiled-bottom {
+  --window-radius: 0px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   3. Finestre: angoli grandi, ombra morbida
+   ════════════════════════════════════════════════════════════════════════
+   L'ombra decide anche quanto è larga la fascia invisibile da cui si ridimensiona una finestra: con un dito
+   serve generosa, quindi l'alone si estende lontano. */
+
+window.csd {
+  box-shadow: 0 12px 40px 6px var(--t-shade-md), 0 0 0 1px var(--t-shade-lo);
+  outline: none;
+}
+
+window.csd:backdrop {
+  box-shadow: 0 6px 24px 4px var(--t-shade-lo), 0 0 0 1px var(--t-shade-lo);
+}
+
+window.csd.maximized,
+window.csd.fullscreen,
+window.csd.tiled,
+window.csd.tiled-top,
+window.csd.tiled-left,
+window.csd.tiled-right,
+window.csd.tiled-bottom {
+  box-shadow: none;
+}
+
+/* Dialoghi e avvisi */
+window.dialog.message.csd,
+window.messagedialog.csd,
+window.dialog-window.alert.csd {
+  border-radius: {{radius}}px;
+}
+
+dialog.alert sheet,
+dialog-host > dialog.alert sheet {
+  border-radius: {{radius}}px;
+}
+
+/* Foglietti sovrapposti (AdwDialog fluttuante, bottom sheet) */
+floating-sheet > sheet,
+bottom-sheet > sheet {
+  border-radius: {{radius}}px;
+  box-shadow: 0 16px 48px 0 var(--t-shade-hi);
+  outline: none;
+}
+
+bottom-sheet > sheet {
+  border-radius: {{radius}}px {{radius}}px 0 0;
+}
+
+bottom-sheet > sheet > outline {
+  box-shadow: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   4. Barra del titolo e pulsanti finestra
+   ════════════════════════════════════════════════════════════════════════ */
+
+headerbar {
+  min-height: {{px:56}}px;
+  padding: 0 {{px:6}}px;
+  box-shadow: inset 0 -1px var(--t-line);
+}
+
+headerbar:backdrop {
+  box-shadow: inset 0 -1px var(--t-line);
+}
+
+/* Barre dentro AdwToolbarView: il filo lo disegna il contenitore, e solo quando serve (libadwaita lo gestisce) */
+toolbarview > .top-bar headerbar,
+toolbarview > .top-bar .toolbar,
+headerbar.flat {
+  box-shadow: none;
+}
+
+headerbar windowtitle .title,
+headerbar .title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+headerbar windowtitle .subtitle,
+headerbar .subtitle {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+headerbar button.flat,
+headerbar button.image-button,
+headerbar menubutton > button {
+  min-height: {{px:44}}px;
+  min-width: {{px:44}}px;
+}
+
+/* I pulsanti della finestra: cerchi da 44px, senza sfondo finché non si toccano. «Chiudi» diventa rosso. */
+windowcontrols {
+  border-spacing: {{px:4}}px;
+  padding: 0 {{px:4}}px;
+}
+
+windowcontrols > button {
+  min-width: 0;
+  min-height: 0;
+  padding: {{px:2}}px;
+  margin: 0;
+  background: none;
+  box-shadow: none;
+}
+
+windowcontrols > button > image {
+  min-width: {{px:40}}px;
+  min-height: {{px:40}}px;
+  padding: 0;
+  border-radius: {{pill}}px;
+  background-color: var(--t-field);
+  box-shadow: none;
+  transition: background-color {{ms:120}} ease, color {{ms:120}} ease;
+}
+
+windowcontrols > button:active > image {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 32%, transparent);
+}
+
+windowcontrols > button.close > image {
+  color: currentColor;
+}
+
+windowcontrols > button.close:active > image,
+windowcontrols > button.close:hover > image {
+  background-color: var(--t-red);
+  color: var(--t-red-fg);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   5. Pulsanti
+   ════════════════════════════════════════════════════════════════════════ */
+
+button {
+  min-height: {{px:44}}px;
+  min-width: {{px:44}}px;
+  padding: 0 {{px:20}}px;
+  border-radius: {{r}}px;
+  box-shadow: none;
+  transition: background-color {{ms:120}} ease, color {{ms:120}} ease, box-shadow {{ms:120}} ease;
+}
+
+button:active {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 28%, var(--t-field));
+  color: inherit;
+}
+
+button:checked {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 26%, var(--t-field));
+}
+
+/* Pulsanti con una sola icona o piatti: niente imbottitura laterale, stessa area da toccare */
+button.image-button,
+button.flat,
+button.circular,
+button.toggle.flat {
+  padding: 0;
+}
+
+button.flat:active,
+button.flat:checked {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 24%, transparent);
+}
+
+button.suggested-action:active {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 80%, black);
+}
+
+button.destructive-action:active {
+  background-color: color-mix(in srgb, var(--destructive-bg-color) 80%, black);
+}
+
+/* Le pillole e i cerchi di libadwaita restano pillole e cerchi, ma più alti */
+button.pill {
+  min-height: {{px:52}}px;
+  padding: 0 {{px:32}}px;
+  border-radius: {{pill}}px;
+}
+
+button.circular,
+menubutton.circular > button {
+  min-width: {{px:44}}px;
+  min-height: {{px:44}}px;
+  border-radius: {{pill}}px;
+}
+
+splitbutton,
+splitbutton > button,
+splitbutton > menubutton > button {
+  min-height: {{px:44}}px;
+}
+
+/* Gruppi di pulsanti collegati: segmenti con angoli esterni grandi, interni piccoli */
+.linked > button,
+.linked > menubutton > button {
+  min-width: {{px:44}}px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   6. Campi di testo
+   ════════════════════════════════════════════════════════════════════════ */
+
+entry,
+spinbutton,
+searchentry,
+passwordentry {
+  min-height: {{px:48}}px;
+  padding: 0 {{px:14}}px;
+  border-radius: {{r}}px;
+  background-color: var(--t-field);
+  box-shadow: none;
+  transition: box-shadow {{ms:120}} ease, background-color {{ms:120}} ease;
+}
+
+entry > text,
+searchentry > text,
+passwordentry > text,
+spinbutton > text {
+  min-height: {{px:48}}px;
+}
+
+/* L'anello lo disegna il campo (con un'ombra interna), mai il suo testo né i suoi contenitori */
+entry:focus-within,
+spinbutton:focus-within,
+searchentry:focus-within,
+passwordentry:focus-within {
+  background-color: var(--t-field);
+  box-shadow: inset 0 0 0 {{frame}}px var(--accent-bg-color);
+  outline: none;
+}
+
+entry.flat,
+spinbutton.flat,
+row.entry,
+row entry.flat,
+row.spin spinbutton,
+row.spin spinbutton:focus-within {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+entry > text > selection,
+text > selection {
+  background-color: var(--accent-bg-color);
+  color: var(--accent-fg-color);
+}
+
+/* I pulsanti + e − di uno spinbutton: bersagli veri */
+spinbutton > button {
+  min-width: {{px:44}}px;
+  min-height: {{px:44}}px;
+}
+
+/* ── Anello di fuoco da tastiera ──────────────────────────────────────────
+   Solo il widget che ha davvero il fuoco (:focus): in GTK4 :focus-visible sale anche su tutti gli antenati, e senza
+   :focus ogni contenitore (finestra, barra, riquadri del dialogo…) si prende la sua cornice annidata. */
+*:focus:focus-visible {
+  outline: {{frame}}px solid var(--accent-bg-color);
+  outline-offset: -{{frame}}px;
+}
+
+button.suggested-action:focus:focus-visible,
+button.opaque.suggested-action:focus:focus-visible,
+menubutton.suggested-action > button:focus:focus-visible {
+  outline-color: var(--accent-fg-color);
+}
+
+button.destructive-action:focus:focus-visible,
+menubutton.destructive-action > button:focus:focus-visible {
+  outline-color: var(--destructive-fg-color);
+}
+
+/* Contenitori e campi di testo: il fuoco lo mostrano da soli (o non lo mostrano) */
+window:focus:focus-visible,
+dialog:focus:focus-visible,
+sheet:focus:focus-visible,
+popover:focus:focus-visible,
+headerbar:focus:focus-visible,
+scrolledwindow:focus:focus-visible,
+viewport:focus:focus-visible,
+text:focus:focus-visible,
+textview:focus:focus-visible,
+entry:focus:focus-visible,
+spinbutton:focus:focus-visible,
+searchentry:focus:focus-visible,
+passwordentry:focus:focus-visible,
+modelbutton:focus:focus-visible,
+row.entry:focus:focus-visible,
+row:focus-within > box:focus:focus-visible {
+  outline: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   7. Liste, righe, barre laterali
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Gruppi di righe (preferenze, impostazioni): carte morbide, senza filetti */
+list.boxed-list,
+list.content,
+.card,
+frame {
+  border-radius: {{radius-2}}px;
+  box-shadow: none;
+}
+
+list.boxed-list,
+list.content,
+.card {
+  background-color: var(--t-card);
+}
+
+list.boxed-list-separate > row,
+.card.activatable,
+menubutton.card > button {
+  border-radius: {{radius-2}}px;
+}
+
+list.boxed-list-separate > row {
+  box-shadow: none;
+  background-color: var(--t-card);
+}
+
+/* Righe: 64px, il dito non deve mirare */
+row {
+  min-height: {{px:64}}px;
+  border-radius: {{r}}px;
+  transition: background-color {{ms:120}} ease;
+}
+
+row.activatable:active {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 16%, transparent);
+}
+
+/* Le righe delle liste raggruppate sono rettangoli (la carta le arrotonda) */
+list.boxed-list > row,
+list.content > row {
+  border-radius: 0;
+}
+
+list.boxed-list > row:first-child,
+list.content > row:first-child {
+  border-top-left-radius: {{radius-2}}px;
+  border-top-right-radius: {{radius-2}}px;
+}
+
+list.boxed-list > row:last-child,
+list.content > row:last-child {
+  border-bottom-left-radius: {{radius-2}}px;
+  border-bottom-right-radius: {{radius-2}}px;
+}
+
+/* Righe compatte che non sono «righe di impostazione» (liste dentro a un popover, menu a tendina) */
+popover row,
+popover.menu row {
+  min-height: {{px:48}}px;
+}
+
+/* Selezione: un riempimento morbido del segnale, senza barre */
+row:selected,
+.view:selected,
+.view:selected:focus,
+iconview:selected,
+gridview > child:selected,
+flowbox > flowboxchild:selected,
+.navigation-sidebar > row:selected {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 22%, transparent);
+  color: inherit;
+}
+
+row:selected image,
+.navigation-sidebar > row:selected image {
+  color: var(--accent-bg-color);
+}
+
+row:selected:focus-visible,
+.navigation-sidebar > row:selected:focus-visible {
+  outline: none;
+}
+
+textview > text:selected,
+label > selection,
+selection {
+  background-color: var(--accent-bg-color);
+  color: var(--accent-fg-color);
+}
+
+/* Barre laterali: righe da 52px con angoli grandi e spazio tra l'una e l'altra */
+.navigation-sidebar {
+  padding: {{px:6}}px;
+}
+
+.navigation-sidebar > row,
+.navigation-sidebar > child,
+.navigation-sidebar > flowboxchild {
+  min-height: {{px:52}}px;
+  margin: {{px:2}}px 0;
+  padding: 0 {{px:8}}px;
+  border-radius: {{r}}px;
+}
+
+flowbox > flowboxchild,
+gridview > child,
+tabbar tabbox > tabboxchild,
+popover.menu modelbutton,
+popover.menu list > row,
+popover.menu listview > row,
+menubar > item,
+expander-widget > box > title,
+toggle-group {
+  border-radius: {{r}}px;
+}
+
+.navigation-sidebar > row.heading,
+.sidebar-section-title {
+  min-height: {{px:40}}px;
+  font-weight: 700;
+}
+
+separator {
+  min-width: 1px;
+  min-height: 1px;
+}
+
+/* Elenchi ad albero e colonne (app GTK4 più vecchie): righe da dito */
+columnview > listview > row,
+listview > row,
+treeview.view {
+  min-height: {{px:48}}px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   8. Interruttori, spunte, cursori, barre
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Interruttore 64×32: una capsula con una manopola da 26px (le dimensioni le decide la manopola) */
+switch {
+  border-radius: {{pill}}px;
+  background-color: var(--t-raised);
+  box-shadow: none;
+  transition: background-color {{ms:160}} ease;
+}
+
+switch:checked {
+  background-color: var(--accent-bg-color);
+  box-shadow: none;
+}
+
+switch > slider {
+  min-width: {{px:26}}px;
+  min-height: {{px:26}}px;
+  margin: {{px:3}}px;
+  border-radius: {{pill}}px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px var(--t-shade-hi);
+}
+
+switch:checked > slider {
+  background-color: var(--accent-fg-color);
+}
+
+/* Spunte e selettori tondi: 26px */
+/* libadwaita aggiunge 3px di imbottitura attorno: 20 + 6 = 26px visibili */
+check,
+radio {
+  min-width: {{px:20}}px;
+  min-height: {{px:20}}px;
+}
+
+check {
+  border-radius: {{r*0.55}}px;
+}
+
+check:checked,
+check:indeterminate,
+radio:checked,
+radio:indeterminate {
+  background-color: var(--accent-bg-color);
+  color: var(--accent-fg-color);
+  box-shadow: none;
+}
+
+checkbutton,
+checkbutton.text-button {
+  min-height: {{px:44}}px;
+  padding: 0 {{px:4}}px;
+}
+
+/* Cursore: un'asta grossa e una manopola grande, da afferrare con il pollice */
+scale > trough {
+  min-height: {{px:8}}px;
+  border-radius: {{pill}}px;
+  background-color: var(--t-raised);
+}
+
+scale.vertical > trough {
+  min-width: {{px:8}}px;
+  min-height: 0;
+}
+
+scale > trough > fill,
+scale > trough > highlight {
+  border-radius: {{pill}}px;
+  background-color: var(--accent-bg-color);
+}
+
+scale > trough > slider {
+  min-width: {{px:28}}px;
+  min-height: {{px:28}}px;
+  margin: -{{px:10}}px;
+  border-radius: {{pill}}px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px var(--t-shade-hi);
+}
+
+scale > trough > slider:active {
+  background-color: var(--accent-bg-color);
+}
+
+progressbar > trough {
+  min-height: {{px:8}}px;
+  border-radius: {{pill}}px;
+  background-color: var(--t-raised);
+}
+
+progressbar > trough > progress {
+  min-height: {{px:8}}px;
+  border-radius: {{pill}}px;
+  background-color: var(--accent-bg-color);
+}
+
+levelbar trough > block {
+  border-radius: {{pill}}px;
+  min-height: {{px:8}}px;
+}
+
+levelbar trough > block.filled {
+  background-color: var(--accent-bg-color);
+}
+
+levelbar trough > block.empty {
+  background-color: var(--t-raised);
+}
+
+/* Barre di scorrimento: il dito scorre trascinando il contenuto, ma l'indicatore deve potersi vedere */
+scrollbar.overlay-indicator:not(.dragging):not(.hovering) > range > trough > slider {
+  min-width: {{px:5}}px;
+  min-height: {{px:5}}px;
+}
+
+scrollbar > range > trough > slider {
+  border-radius: {{pill}}px;
+  background-color: var(--t-faint);
+}
+
+scrollbar > range > trough > slider:active {
+  background-color: var(--accent-bg-color);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   9. Menu, popover, suggerimenti
+   ════════════════════════════════════════════════════════════════════════ */
+
+popover > contents,
+popover.menu > contents,
+menubar > item popover.menu popover.menu > contents {
+  padding: {{px:6}}px;
+  border-radius: {{radius}}px;
+  box-shadow: 0 12px 36px 0 var(--t-shade-hi), 0 0 0 1px var(--t-shade-lo);
+}
+
+/* Niente codina e niente orlo chiaro: i menu galleggiano, come quelli della Shell */
+popover > arrow {
+  min-width: 0;
+  min-height: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  opacity: 0;
+}
+
+popover > contents {
+  outline: none;
+}
+
+/* Voci di menu: 48px, con la stessa morbidezza dei pulsanti */
+popover.menu modelbutton {
+  min-height: {{px:48}}px;
+  padding: 0 {{px:16}}px;
+}
+
+popover.menu modelbutton:active,
+popover.menu modelbutton:focus {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 22%, transparent);
+}
+
+menuitem {
+  min-height: {{px:44}}px;
+}
+
+tooltip {
+  border-radius: {{pill}}px;
+}
+
+tooltip > box {
+  padding: {{px:8}}px {{px:16}}px;
+}
+
+/* Tasti (scorciatoie): un tasto vero, rialzato */
+shortcut .keycap,
+shortcut-label .keycap {
+  border-radius: {{r*0.6}}px;
+  background-color: var(--t-raised);
+  box-shadow: none;
+  padding: {{px:3}}px {{px:8}}px;
+  font-weight: 600;
+}
+
+/* Menu a tendina (AdwComboRow, GtkDropDown) */
+dropdown > button,
+combobox button {
+  min-height: {{px:44}}px;
+}
+
+dropdown popover > contents listview > row,
+dropdown popover > contents list > row {
+  min-height: {{px:48}}px;
+  padding: 0 {{px:14}}px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   10. Schede, avvisi, notifiche interne
+   ════════════════════════════════════════════════════════════════════════ */
+
+tabbar tab,
+notebook > header > tabs > tab {
+  min-height: {{px:48}}px;
+  border-radius: {{r}}px;
+}
+
+tabbar tab:active,
+notebook > header > tabs > tab:active {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 22%, transparent);
+}
+
+tabbar tab:selected,
+notebook > header > tabs > tab:checked {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 20%, transparent);
+  box-shadow: none;
+}
+
+tabbar tab button.close,
+tabbar tab button.image-button {
+  min-width: {{px:36}}px;
+  min-height: {{px:36}}px;
+  border-radius: {{pill}}px;
+}
+
+tabbar tab indicator {
+  border-radius: {{pill}}px;
+}
+
+/* Selettore di viste (barra in alto o in basso) */
+viewswitcher > button,
+viewswitcherbar button {
+  min-height: {{px:48}}px;
+}
+
+toast,
+.app-notification {
+  border-radius: {{pill}}px;
+  box-shadow: 0 8px 24px var(--t-shade-hi);
+  padding: {{px:4}}px {{px:6}}px;
+}
+
+toast button {
+  min-height: {{px:40}}px;
+  border-radius: {{pill}}px;
+}
+
+banner > revealer > widget {
+  box-shadow: none;
+}
+
+banner > revealer > widget > label {
+  min-height: {{px:48}}px;
+}
+
+infobar {
+  border-radius: {{r}}px;
+}
+
+.osd,
+.toolbar.osd {
+  border-radius: {{r+4}}px;
+  box-shadow: 0 8px 24px var(--t-shade-hi);
+}
+
+/* Dialoghi (AdwAlertDialog): pulsanti larghi e alti, uno sotto l'altro nelle schermate strette */
+dialog.alert .response-area > button,
+dialog.alert .response-area > .response-button {
+  min-height: {{px:48}}px;
+}
+
+/* Gli avatar restano tondi: sono facce, non controlli. */
+avatar {
+  border-radius: 9999px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   11. Dettagli
+   ════════════════════════════════════════════════════════════════════════ */
+
+.accent {
+  color: var(--accent-bg-color);
+}
+
+.suggested-action label,
+.suggested-action image {
+  color: inherit;
+}
+
+calendar > grid > label.day-number {
+  min-width: {{px:40}}px;
+  min-height: {{px:40}}px;
+}
+
+calendar > grid > label.day-number:checked,
+calendar > grid > label.day-number:selected {
+  border-radius: {{pill}}px;
+}
+
+emoji,
+popover.emoji-picker emoji {
+  border-radius: {{r}}px;
+  min-width: {{px:44}}px;
+  min-height: {{px:44}}px;
+}
+
+colorswatch,
+colorswatch > overlay {
+  border-radius: {{r}}px;
+  min-width: {{px:44}}px;
+  min-height: {{px:44}}px;
+}
+
+/* Barre degli strumenti in basso (AdwToolbarView): più alte, con respiro */
+toolbarview > .bottom-bar .toolbar,
+actionbar > revealer > box {
+  min-height: {{px:56}}px;
+  padding: {{px:4}}px {{px:8}}px;
+}

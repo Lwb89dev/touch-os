@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=Touch
+Comment=Un desktop GNOME 50 fatto per essere toccato: bersagli da pollice, forme morbide, gesti dai bordi
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=Touch
+IconTheme=Tela-purple-dark

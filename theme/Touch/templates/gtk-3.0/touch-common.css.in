@@ -1,0 +1,378 @@
+/*
+ * Touch OS — GTK 3, overlay comune a chiaro e scuro.
+ * Si appoggia sui colori nominati definiti in touch-light.css / touch-dark.css.
+ * GTK3 non ha variabili CSS né color-mix: qui si usano @colori, alpha() e mix().
+ * Stessa idea del tema GTK4: bersagli da dito (44–48px, righe 56px), riempimenti morbidi invece di bordi,
+ * angoli grandi, :active come conferma del tocco.
+ */
+
+/* ── Finestre ─────────────────────────────────────────────────────────── */
+
+window.csd,
+window.csd.background,
+window.background.csd,
+window.csd.unified,
+window.csd.solid-csd {
+  border-radius: {{radius}}px {{radius}}px 0 0;
+}
+
+/* La fascia trasparente attorno alla finestra è la zona da cui si ridimensiona: generosa, per il dito. */
+decoration {
+  border-radius: {{radius}}px {{radius}}px 0 0;
+  margin: 18px;
+  /*{{#shadows}}*/box-shadow: 0 10px 34px 4px alpha(@t_shade, 0.42), 0 0 0 1px alpha(@t_shade, 0.18);/*{{/shadows}}*/
+  /*{{^shadows}}*/box-shadow: 0 0 0 1px alpha(@t_shade, 0.25);/*{{/shadows}}*/
+}
+
+decoration:backdrop {
+  /*{{#shadows}}*/box-shadow: 0 6px 20px 2px alpha(@t_shade, 0.28), 0 0 0 1px alpha(@t_shade, 0.14);/*{{/shadows}}*/
+  /*{{^shadows}}*/box-shadow: 0 0 0 1px alpha(@t_shade, 0.15);/*{{/shadows}}*/
+}
+
+.maximized decoration,
+.fullscreen decoration,
+.tiled decoration,
+.tiled-top decoration,
+.tiled-right decoration,
+.tiled-bottom decoration,
+.tiled-left decoration {
+  margin: 0;
+  box-shadow: none;
+}
+
+/* ── Barra del titolo ─────────────────────────────────────────────────── */
+
+headerbar,
+.titlebar:not(headerbar) {
+  min-height: {{px:56}}px;
+  padding: 0 {{px:6}}px;
+  background-image: none;
+  box-shadow: inset 0 -1px @t_line;
+}
+
+headerbar:backdrop,
+.titlebar:backdrop:not(headerbar) {
+  box-shadow: inset 0 -1px @t_line;
+}
+
+headerbar .title,
+.titlebar .title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+headerbar .subtitle,
+.titlebar .subtitle {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+headerbar button,
+.titlebar button {
+  min-height: {{px:44}}px;
+  min-width: {{px:44}}px;
+}
+
+/* Pulsanti finestra: cerchi da 40px; «Chiudi» diventa rosso quando lo si tocca. */
+headerbar button.titlebutton:not(.appmenu),
+.titlebar button.titlebutton:not(.appmenu) {
+  min-width: {{px:40}}px;
+  min-height: {{px:40}}px;
+  margin: 0 {{px:3}}px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background-image: none;
+  background-color: @t_field;
+  box-shadow: none;
+}
+
+headerbar button.titlebutton:not(.appmenu):active,
+.titlebar button.titlebutton:not(.appmenu):active {
+  background-color: alpha(@accent_bg_color, 0.32);
+}
+
+headerbar button.titlebutton.close:not(.appmenu):active,
+.titlebar button.titlebutton.close:not(.appmenu):active {
+  background-color: @t_red;
+  color: @t_red_fg;
+}
+
+/* ── Pulsanti ─────────────────────────────────────────────────────────── */
+
+button {
+  min-height: {{px:44}}px;
+  min-width: {{px:44}}px;
+  padding: 0 {{px:20}}px;
+  border-radius: {{r}}px;
+  box-shadow: none;
+}
+
+/* I riempimenti li decide il tema, non la base adw-gtk3 (che ha i suoi grigi e il suo blu) */
+button,
+button.toggle {
+  background-image: none;
+  background-color: @t_field;
+  color: @window_fg_color;
+  border: none;
+}
+
+button.flat,
+button.flat:disabled,
+headerbar button.flat {
+  background-color: transparent;
+}
+
+button.suggested-action {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
+button.destructive-action {
+  background-color: @destructive_bg_color;
+  color: @destructive_fg_color;
+}
+
+button:active {
+  background-color: mix(@t_field, @accent_bg_color, 0.28);
+}
+
+button:checked {
+  background-color: mix(@t_field, @accent_bg_color, 0.26);
+}
+
+button.flat:active,
+button.flat:checked {
+  background-color: alpha(@accent_bg_color, 0.24);
+}
+
+button.image-button,
+button.flat,
+button.circular {
+  padding: 0;
+}
+
+button.circular,
+button.pill {
+  border-radius: 999px;
+}
+
+button.suggested-action:active,
+button.suggested-action:checked {
+  background-color: shade(@accent_bg_color, 0.85);
+  color: @accent_fg_color;
+}
+
+button.destructive-action:active,
+button.destructive-action:checked {
+  background-color: shade(@destructive_bg_color, 0.85);
+  color: @destructive_fg_color;
+}
+
+/* ── Campi di testo ───────────────────────────────────────────────────── */
+
+entry,
+spinbutton {
+  min-height: {{px:48}}px;
+  padding: 0 {{px:14}}px;
+  border-radius: {{r}}px;
+  background-color: @t_field;
+  box-shadow: none;
+}
+
+entry:focus,
+spinbutton:focus-within {
+  box-shadow: inset 0 0 0 {{frame}}px @accent_bg_color;
+}
+
+spinbutton button {
+  min-width: {{px:44}}px;
+  min-height: {{px:44}}px;
+}
+
+selection,
+entry selection,
+textview text selection,
+.view:selected,
+.view:selected:focus {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
+/* ── Liste e barre laterali ───────────────────────────────────────────── */
+
+list row,
+.navigation-sidebar row,
+row {
+  min-height: {{px:56}}px;
+  border-radius: {{r}}px;
+}
+
+list row:selected,
+.navigation-sidebar row:selected,
+row:selected,
+treeview.view:selected,
+iconview:selected {
+  background-color: alpha(@accent_bg_color, 0.22);
+  color: @window_fg_color;
+  box-shadow: none;
+}
+
+.navigation-sidebar row {
+  min-height: {{px:52}}px;
+  margin: {{px:2}}px {{px:6}}px;
+}
+
+frame > border,
+.frame {
+  border-radius: {{radius-2}}px;
+}
+
+/* ── Interruttori, cursori, barre ─────────────────────────────────────── */
+
+switch {
+  border-radius: 999px;
+  background-color: @t_raised;
+  box-shadow: none;
+  border: none;
+}
+
+switch:checked {
+  background-color: @accent_bg_color;
+}
+
+switch slider {
+  min-width: {{px:26}}px;
+  min-height: {{px:26}}px;
+  margin: {{px:3}}px;
+  border-radius: 999px;
+  border: none;
+  background-image: none;
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px alpha(@t_shade, 0.4);
+}
+
+check,
+radio,
+checkbutton check {
+  min-width: {{px:26}}px;
+  min-height: {{px:26}}px;
+}
+
+check {
+  border-radius: {{r*0.55}}px;
+}
+
+check:checked,
+check:indeterminate,
+radio:checked {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
+checkbutton,
+radiobutton {
+  min-height: {{px:44}}px;
+}
+
+scale trough {
+  min-height: {{px:8}}px;
+  border-radius: 999px;
+  background-color: @t_raised;
+}
+
+scale trough highlight {
+  border-radius: 999px;
+  background-color: @accent_bg_color;
+}
+
+scale slider {
+  min-width: {{px:28}}px;
+  min-height: {{px:28}}px;
+  margin: -{{px:10}}px;
+  border-radius: 999px;
+  border: none;
+  background-image: none;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px alpha(@t_shade, 0.45);
+}
+
+progressbar trough {
+  min-height: {{px:8}}px;
+  border-radius: 999px;
+  background-color: @t_raised;
+}
+
+progressbar progress {
+  min-height: {{px:8}}px;
+  border-radius: 999px;
+  background-color: @accent_bg_color;
+}
+
+levelbar trough block {
+  border-radius: 999px;
+}
+
+scrollbar slider {
+  border-radius: 999px;
+  background-color: @t_faint;
+}
+
+scrollbar slider:active {
+  background-color: @accent_bg_color;
+}
+
+/* ── Menu, popover, suggerimenti ──────────────────────────────────────── */
+
+menu,
+.menu,
+popover.background,
+popover {
+  padding: {{px:6}}px;
+  border-radius: {{radius}}px;
+  /*{{#shadows}}*/box-shadow: 0 10px 30px alpha(@t_shade, 0.4), 0 0 0 1px alpha(@t_shade, 0.12);/*{{/shadows}}*/
+  /*{{^shadows}}*/box-shadow: 0 0 0 1px alpha(@t_shade, 0.2);/*{{/shadows}}*/
+}
+
+menuitem,
+modelbutton {
+  min-height: {{px:44}}px;
+  padding: 0 {{px:14}}px;
+  border-radius: {{r}}px;
+}
+
+menuitem:active,
+menuitem:hover,
+modelbutton:active,
+modelbutton:focus {
+  background-color: alpha(@accent_bg_color, 0.22);
+}
+
+tooltip,
+tooltip.background {
+  border-radius: 999px;
+}
+
+tooltip label {
+  padding: {{px:6}}px {{px:14}}px;
+}
+
+/* ── Schede ───────────────────────────────────────────────────────────── */
+
+notebook > header > tabs > tab {
+  min-height: {{px:48}}px;
+  border-radius: {{r}}px;
+}
+
+notebook > header > tabs > tab:checked {
+  background-color: alpha(@accent_bg_color, 0.2);
+  box-shadow: none;
+}
+
+/* ── Dettagli ─────────────────────────────────────────────────────────── */
+
+.osd,
+.app-notification,
+infobar {
+  border-radius: {{r}}px;
+}

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <enum id="org.gnome.shell.extensions.touch-shell.accent">
+    <value nick="iris" value="0"/>
+    <value nick="sky" value="1"/>
+    <value nick="mint" value="2"/>
+    <value nick="coral" value="3"/>
+    <value nick="amber" value="4"/>
+    <value nick="rose" value="5"/>
+  </enum>
+
+  <schema id="org.gnome.shell.extensions.touch-shell" path="/org/gnome/shell/extensions/touch-shell/">
+
+    <!-- ── Gesti dai bordi ────────────────────────────────────────────── -->
+    <key name="home-gesture" type="b">
+      <default>true</default>
+      <summary>Dal bordo inferiore: tirando su si apre la panoramica (Home), scorrendo di lato si cambia app</summary>
+    </key>
+    <key name="app-flip" type="b">
+      <default>true</default>
+      <summary>Scorrere lungo il bordo inferiore passa all'app precedente o successiva</summary>
+    </key>
+    <key name="home-pill" type="b">
+      <default>true</default>
+      <summary>Mostra la barretta Home al centro del bordo inferiore</summary>
+    </key>
+    <key name="home-zone" type="i">
+      <default>28</default>
+      <range min="16" max="56"/>
+      <summary>Altezza (px) della fascia del bordo inferiore che risponde ai gesti</summary>
+    </key>
+    <key name="top-gesture" type="b">
+      <default>true</default>
+      <summary>Dal bordo superiore: tirando giù a destra le impostazioni rapide, a sinistra notifiche e calendario</summary>
+    </key>
+    <key name="top-zone" type="i">
+      <default>22</default>
+      <range min="12" max="48"/>
+      <summary>Altezza (px) della fascia del bordo superiore che risponde ai gesti</summary>
+    </key>
+
+    <!-- ── Shelf (il dock che si tocca) ───────────────────────────────── -->
+    <key name="shelf" type="b">
+      <default>true</default>
+      <summary>Shelf: il dock a scomparsa che si apre toccando la barretta Home</summary>
+    </key>
+    <key name="shelf-on-desktop" type="b">
+      <default>true</default>
+      <summary>Lo Shelf resta aperto finché non c'è nessuna finestra (desktop vuoto)</summary>
+    </key>
+    <key name="shelf-keyboard-button" type="b">
+      <default>true</default>
+      <summary>Nello Shelf, un tasto per mostrare e nascondere la tastiera su schermo</summary>
+    </key>
+    <key name="shelf-timeout" type="i">
+      <default>8</default>
+      <range min="0" max="60"/>
+      <summary>Secondi di inattività dopo i quali lo Shelf si richiude da solo (0 = mai)</summary>
+    </key>
+
+    <!-- ── Finestre ───────────────────────────────────────────────────── -->
+    <key name="auto-maximize" type="b">
+      <default>true</default>
+      <summary>Modalità tablet: le finestre nuove si aprono massimizzate (le finestre piccole e i dialoghi no)</summary>
+    </key>
+
+    <!-- ── Movimento ──────────────────────────────────────────────────── -->
+    <key name="motion" type="b">
+      <default>true</default>
+      <summary>Animazioni degli elementi aggiunti da Touch OS (Shelf, barretta, cambio app)</summary>
+    </key>
+    <key name="motion-speed" type="i">
+      <default>100</default>
+      <range min="25" max="250"/>
+      <summary>Velocità delle animazioni in percentuale (100 = normale, 200 = il doppio più veloci)</summary>
+    </key>
+
+    <!-- ── Tema (rigenera i file CSS: vedi themegen.js) ───────────────── -->
+    <key name="accent" enum="org.gnome.shell.extensions.touch-shell.accent">
+      <default>'iris'</default>
+      <summary>Colore segnale: iris (marchio), cielo, menta, corallo, ambra, rosa</summary>
+    </key>
+    <key name="corner-radius" type="i">
+      <default>20</default>
+      <range min="0" max="32"/>
+      <summary>Raggio degli angoli di finestre, dialoghi e pannelli</summary>
+    </key>
+    <key name="control-radius" type="i">
+      <default>14</default>
+      <range min="0" max="24"/>
+      <summary>Raggio degli angoli di pulsanti, campi di testo e righe</summary>
+    </key>
+    <key name="frame-width" type="i">
+      <default>2</default>
+      <range min="1" max="4"/>
+      <summary>Spessore dell'anello che mostra il fuoco da tastiera</summary>
+    </key>
+    <key name="touch-scale" type="i">
+      <default>100</default>
+      <range min="80" max="140"/>
+      <summary>Dimensione dei bersagli (percentuale): 100 = 48px per i pulsanti, 64px per le righe</summary>
+    </key>
+    <key name="shadows" type="b">
+      <default>true</default>
+      <summary>Ombre morbide sugli elementi che galleggiano (menu, dialoghi, Shelf)</summary>
+    </key>
+    <key name="theme-animations" type="b">
+      <default>true</default>
+      <summary>Transizioni nelle app GTK e nella Shell</summary>
+    </key>
+    <key name="theme-serial" type="i">
+      <default>0</default>
+      <summary>Contatore interno: cambia quando il tema viene rigenerato, per ricaricare la Shell</summary>
+    </key>
+  </schema>
+</schemalist>

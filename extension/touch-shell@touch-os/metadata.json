@@ -1,0 +1,8 @@
+{
+  "uuid": "touch-shell@touch-os",
+  "name": "Touch Shell",
+  "description": "Gesti dai bordi per un desktop da toccare: barretta Home, Shelf, impostazioni rapide dall'alto, cambio app a scorrimento e modalità tablet.",
+  "shell-version": ["50"],
+  "settings-schema": "org.gnome.shell.extensions.touch-shell",
+  "version": 1
+}

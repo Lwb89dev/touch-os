@@ -1,0 +1,1529 @@
+/*
+ * Touch OS — GNOME Shell
+ *
+ * Solo override: la Shell carica sempre il suo CSS di default sotto questo file (la variante chiara o
+ * scura, secondo lo schema di sistema; l'estensione carica la nostra corrispondente).
+ *
+ * Tre regole, in quest'ordine:
+ *  1. Un bersaglio che si tocca non è mai più piccolo di 48px: pulsanti, righe dei menu, tasti. {{px:48}} scala
+ *     con la voce «touch-scale» delle impostazioni.
+ *  2. Le superfici sono riempimenti morbidi, non scatole con un bordo: ciò che sta sopra è più chiaro di ciò che
+ *     sta sotto (view < bg < surface < dialog < raised), e solo ciò che galleggia ha un'ombra.
+ *  3. Nessun effetto che esista solo col puntatore: lo stato che conta è :active (il dito è giù), non :hover.
+ *
+ * Limiti di St (il motore CSS della Shell): niente linear-gradient(), var(), text-transform; un solo
+ * box-shadow per nodo (quindi ombra OPPURE anello); il bordo è sempre uniforme sui quattro lati.
+ */
+
+stage {
+  color: {{fg}};
+}
+
+/* ── Barra superiore ─────────────────────────────────────────────────── */
+
+/* Stesso colore della barra del titolo di un'app massimizzata: in alto le due si fondono in un'unica superficie. */
+#panel {
+  background-color: {{bg}};
+  height: {{px:44}}px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: none;
+  transition-duration: {{ms:200}};
+}
+
+/* Un po' d'aria ai lati: le isole non toccano il bordo dello schermo, e i menu che si aprono sotto di loro
+   si allineano a loro (quindi nemmeno i menu toccano il bordo). */
+#panel #panelLeft {
+  padding-left: {{px:8}}px;
+}
+
+#panel #panelRight {
+  padding-right: {{px:8}}px;
+}
+
+/* Il «bottone» è un'isola a pillola dentro la barra: un bordo trasparente lo stacca dai margini, e l'evidenza
+   (un'ombra interna) lo riempie senza mai invadere il bordo, così l'isola resta alta {{px:36}}px nei 44 della barra. */
+#panel .panel-button {
+  color: {{fg}};
+  border: {{px:4}}px solid transparent;
+  border-radius: {{pill}}px;
+  background-color: transparent;
+  box-shadow: inset 0 0 0 100px transparent;
+  font-weight: 600;
+  -natural-hpadding: {{px:14}}px;
+  -minimum-hpadding: {{px:8}}px;
+  transition-duration: {{ms:140}};
+}
+
+#panel .panel-button:hover {
+  box-shadow: inset 0 0 0 100px {{fg/9}};
+}
+
+/* Il fuoco da tastiera è un anello, non un riempimento: dopo un tocco non deve restare un pulsante «premuto». */
+#panel .panel-button:focus {
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}};
+}
+
+#panel .panel-button:active,
+#panel .panel-button:checked {
+  color: {{fg}};
+  box-shadow: inset 0 0 0 100px {{accent/22}};
+}
+
+#panel .panel-button:active:hover,
+#panel .panel-button:checked:hover {
+  box-shadow: inset 0 0 0 100px {{accent/28}};
+}
+
+#panel .panel-button .system-status-icon {
+  icon-size: 20px;
+  padding: 0 {{px:7}}px;
+  margin: 0;
+}
+
+#panel .panel-button .panel-status-indicators-box {
+  spacing: {{px:6}}px;
+}
+
+#panel .panel-button .panel-status-indicators-box > .system-status-icon {
+  padding: 0;
+}
+
+/* Il pulsante Attività: sui dispositivi touch è la porta di casa, quindi è il più grande. I puntini dei
+   workspace diventano capsule, quella attiva è allungata e colorata. */
+#panel .panel-button#panelActivities StBoxLayout {
+  padding: 0 {{px:6}}px;
+  spacing: {{px:7}}px;
+}
+
+#panel .panel-button#panelActivities .workspace-dot {
+  min-width: {{px:8}}px;
+  min-height: {{px:8}}px;
+  border-radius: {{pill}}px;
+  background-color: {{fg4}};
+}
+
+#panel .panel-button#panelActivities:checked .workspace-dot,
+#panel .panel-button#panelActivities .workspace-dot.active {
+  min-width: {{px:22}}px;
+  background-color: {{accent}};
+}
+
+#panel .panel-button.clock-display .clock {
+  font-weight: 600;
+}
+
+/* Registrazione e condivisione dello schermo restano segnali veri */
+#panel .panel-button.screen-recording-indicator {
+  color: {{deep}};
+  box-shadow: inset 0 0 0 100px {{red}};
+}
+
+#panel .panel-button.screen-sharing-indicator {
+  color: {{deep}};
+  box-shadow: inset 0 0 0 100px {{amber}};
+}
+
+#panel .panel-button.screen-recording-indicator:hover,
+#panel .panel-button.screen-recording-indicator:focus,
+#panel .panel-button.screen-recording-indicator:active,
+#panel .panel-button.screen-sharing-indicator:hover,
+#panel .panel-button.screen-sharing-indicator:focus,
+#panel .panel-button.screen-sharing-indicator:active {
+  color: {{deep}};
+}
+
+/* Schermata di blocco e di accesso: la barra torna trasparente. */
+#panel.unlock-screen,
+#panel.login-screen {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+#panel.unlock-screen .panel-button,
+#panel.login-screen .panel-button {
+  color: #ffffff;
+}
+
+/* ── Menu e popover ──────────────────────────────────────────────────── */
+
+.popup-menu-content,
+.candidate-popup-content {
+  padding: {{px:8}}px;
+  color: {{fg}};
+  background-color: {{dialog}};
+  border: 1px solid {{line}};
+  border-radius: {{radius+4}}px;
+  box-shadow: {{shadow:lg}};
+}
+
+.popup-menu,
+.popup-inactive-menu-item {
+  color: {{fg}};
+}
+
+.popup-menu-item {
+  color: {{fg}};
+  min-height: {{px:32}}px;
+  padding: {{px:10}}px {{px:16}}px;
+  spacing: {{px:12}}px;
+  border-radius: {{r}}px;
+  background-color: transparent;
+  box-shadow: none;
+  transition-duration: {{ms:100}};
+}
+
+.popup-menu-item:hover,
+.popup-menu-item:focus,
+.popup-menu-item:selected {
+  color: {{fg}};
+  background-color: {{raised}};
+  box-shadow: none;
+}
+
+.popup-menu-item:active,
+.popup-menu-item:checked {
+  color: {{fg}};
+  background-color: {{accent/26}};
+  box-shadow: none;
+}
+
+.popup-menu-item:focus {
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+.popup-menu-item:insensitive {
+  color: {{fg4}};
+  background-color: transparent;
+}
+
+.popup-menu-item .popup-menu-icon {
+  icon-size: 22px;
+}
+
+.popup-menu-ornament {
+  color: {{accent}};
+}
+
+.popup-separator-menu-item .popup-separator-menu-item-separator {
+  background-color: {{line}};
+  height: 1px;
+  margin: {{px:6}}px {{px:10}}px;
+}
+
+.popup-sub-menu {
+  color: {{fg}};
+  background-color: {{sunken}};
+  border: none;
+  border-radius: {{r}}px;
+  box-shadow: none;
+}
+
+.popup-sub-menu .popup-menu-item {
+  border-radius: {{r}}px;
+}
+
+/* La freccia del popover: i menu galleggiano staccati dal bordo, senza codina. */
+.popup-menu-boxpointer,
+.candidate-popup-boxpointer {
+  -arrow-border-radius: {{radius+4}}px;
+  -arrow-background-color: {{dialog}};
+  -arrow-border-width: 1px;
+  -arrow-border-color: {{line}};
+  -arrow-base: 0px;
+  -arrow-rise: 0px;
+  -arrow-box-shadow: {{shadow:lg}};
+  -boxpointer-gap: {{px:8}}px;
+}
+
+/* ── Interruttori, cursori, spunte ───────────────────────────────────── */
+
+.toggle-switch {
+  width: {{px:56}}px;
+  height: {{px:32}}px;
+  background-color: {{raised}};
+  border: none;
+  border-radius: {{pill}}px;
+  box-shadow: none;
+  transition-duration: {{ms:160}};
+}
+
+.toggle-switch:checked {
+  background-color: {{accent}};
+}
+
+.toggle-switch .handle,
+.toggle-switch:checked .handle {
+  background-color: {{fg}};
+  border-radius: {{pill}}px;
+  box-shadow: {{shadow:sm}};
+}
+
+.toggle-switch:checked .handle {
+  background-color: {{on}};
+}
+
+.slider {
+  color: {{fg}};
+  -barlevel-height: {{px:8}}px;
+  -barlevel-background-color: {{raised}};
+  -barlevel-active-background-color: {{accent}};
+  -barlevel-overdrive-color: {{red}};
+  -barlevel-overdrive-separator-width: 3px;
+  -slider-handle-radius: {{px:14}}px;
+  -slider-handle-border-width: 0;
+}
+
+.check-box StBin {
+  width: {{px:26}}px;
+  height: {{px:26}}px;
+  border-radius: {{r*0.5}}px;
+  border: 2px solid {{fg4}};
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.check-box:checked StBin {
+  background-color: {{accent}};
+  border-color: {{accent}};
+}
+
+.check-box:checked StIcon,
+.check-box:checked:focus StIcon {
+  color: {{on}};
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* ── Pulsanti e campi ────────────────────────────────────────────────── */
+
+.button {
+  color: {{fg}};
+  min-height: {{px:24}}px;
+  padding: {{px:12}}px {{px:22}}px;
+  background-color: {{field}};
+  border: none;
+  border-radius: {{r}}px;
+  font-weight: 600;
+  box-shadow: none;
+  transition-duration: {{ms:120}};
+}
+
+.button:hover {
+  background-color: {{raised}};
+}
+
+.button:focus {
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}};
+}
+
+.button:active,
+.button:checked {
+  background-color: {{accent/30}};
+}
+
+.button:insensitive {
+  color: {{fg4}};
+  background-color: {{field/60}};
+}
+
+.button.default,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button.default,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:default {
+  color: {{on}};
+  background-color: {{accent}};
+}
+
+.button.default:hover,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button.default:hover,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:default:hover {
+  color: {{on}};
+  background-color: {{hi}};
+}
+
+.button.default:active,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button.default:active,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:default:active {
+  color: {{on}};
+  background-color: {{lo}};
+}
+
+.button.default:focus,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button.default:focus,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:default:focus {
+  color: {{on}};
+  background-color: {{accent}};
+  box-shadow: none !important;
+}
+
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:focus {
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+/* Pulsanti tondi con una sola icona: barra, notifiche, quick settings */
+.icon-button {
+  color: {{fg}};
+  min-width: {{px:24}}px;
+  min-height: {{px:24}}px;
+  padding: {{px:12}}px;
+  background-color: {{field}};
+  border-radius: {{pill}}px;
+  box-shadow: none;
+}
+
+.icon-button:hover,
+.icon-button:focus {
+  background-color: {{raised}};
+  box-shadow: none;
+}
+
+.icon-button:active,
+.icon-button:checked {
+  color: {{on}};
+  background-color: {{accent}};
+}
+
+StEntry {
+  color: {{fg}};
+  min-height: {{px:24}}px;
+  padding: {{px:12}}px {{px:18}}px;
+  caret-color: {{accent}};
+  caret-size: 2px;
+  selection-background-color: {{accent}};
+  selected-color: {{on}};
+  background-color: {{field}};
+  border: none;
+  border-radius: {{r}}px;
+  box-shadow: none;
+  transition-duration: {{ms:120}};
+}
+
+StEntry:focus {
+  background-color: {{field}};
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+StEntry StLabel.hint-text {
+  color: {{fg3}};
+}
+
+/* ── Impostazioni rapide ─────────────────────────────────────────────── */
+
+.quick-settings {
+  padding: {{px:20}}px;
+  border-radius: {{radius+8}}px;
+}
+
+.quick-settings-grid {
+  spacing-rows: {{px:12}}px;
+  spacing-columns: {{px:12}}px;
+}
+
+.quick-toggle,
+.quick-toggle-has-menu {
+  color: {{fg}};
+  min-width: {{px:176}}px;
+  max-width: {{px:176}}px;
+  min-height: {{px:68}}px;
+  background-color: {{field}};
+  border-radius: {{r+8}}px;
+  box-shadow: none;
+  transition-duration: {{ms:140}};
+}
+
+.quick-toggle > StBoxLayout {
+  spacing: {{px:12}}px;
+}
+
+.quick-toggle:ltr > StBoxLayout {
+  padding-left: {{px:18}}px;
+}
+
+.quick-toggle:rtl > StBoxLayout {
+  padding-right: {{px:18}}px;
+}
+
+.quick-toggle .quick-toggle-icon {
+  icon-size: 24px;
+}
+
+.quick-toggle .quick-toggle-title {
+  font-weight: 600;
+}
+
+.quick-toggle .quick-toggle-subtitle {
+  font-weight: normal;
+  font-size: 12px;
+  color: {{fg2}};
+}
+
+.quick-toggle:active {
+  background-color: {{accent/30}};
+}
+
+.quick-toggle:focus {
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+.quick-toggle:checked,
+.quick-toggle-has-menu:checked {
+  color: {{on}};
+  background-color: {{accent}};
+}
+
+.quick-toggle:checked .quick-toggle-subtitle {
+  color: {{on/78}};
+}
+
+.quick-toggle:checked:active {
+  background-color: {{lo}};
+}
+
+/* Un toggle con sottomenu è un involucro con tre pezzi (toggle, filo, freccia): l'involucro porta il colore e il
+   raggio, i pezzi dentro restano senza sfondo, così la freccia non diventa una seconda scatola attaccata. */
+.quick-toggle-has-menu .quick-toggle,
+.quick-toggle-has-menu .quick-toggle:checked,
+.quick-toggle-has-menu .quick-toggle-menu-button,
+.quick-toggle-has-menu .quick-toggle-menu-button:checked {
+  min-width: 0;
+  max-width: 1000px;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.quick-toggle-has-menu .quick-toggle:ltr,
+.quick-toggle-has-menu .quick-toggle:ltr:last-child {
+  border-radius: {{r+8}}px 0 0 {{r+8}}px;
+}
+
+.quick-toggle-has-menu .quick-toggle:ltr:last-child {
+  border-radius: {{r+8}}px;
+}
+
+.quick-toggle-has-menu .quick-toggle-menu-button {
+  min-width: {{px:44}}px;
+  padding: 0 {{px:8}}px;
+  color: inherit;
+}
+
+.quick-toggle-has-menu .quick-toggle-menu-button:ltr {
+  border-radius: 0 {{r+8}}px {{r+8}}px 0;
+}
+
+.quick-toggle-has-menu .quick-toggle:active,
+.quick-toggle-has-menu .quick-toggle-menu-button:active {
+  background-color: {{fg/12}};
+}
+
+.quick-toggle-has-menu .quick-toggle-separator {
+  width: 1px;
+  margin: {{px:16}}px 0;
+  background-color: {{fg/18}};
+}
+
+.quick-toggle-has-menu:checked .quick-toggle-separator {
+  background-color: {{on/28}};
+}
+
+.quick-toggle-menu {
+  color: {{fg}};
+  background-color: {{sunken}};
+  border-radius: {{r+8}}px;
+  padding: {{px:6}}px;
+}
+
+.quick-toggle-menu .header .icon {
+  padding: {{px:12}}px;
+  background-color: {{fg/10}};
+}
+
+.quick-toggle-menu .header .icon.active {
+  background-color: {{accent}};
+  color: {{on}};
+}
+
+.quick-slider .slider-bin {
+  min-height: {{px:48}}px;
+  padding: {{px:6}}px {{px:6}}px;
+  border-radius: {{pill}}px;
+}
+
+.quick-slider .slider-bin:focus {
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+  background-color: transparent;
+}
+
+/* I pulsanti di sistema (cattura, impostazioni, blocca): rettangoli morbidi, come le tessere accanto */
+.quick-settings-system-item .icon-button {
+  padding: {{px:14}}px;
+  border-radius: {{r+8}}px;
+}
+
+/* ── Calendario, notifiche e messaggi ────────────────────────────────── */
+
+.datemenu-popover {
+  border-radius: {{radius+8}}px;
+}
+
+.datemenu-calendar-column {
+  spacing: {{px:12}}px;
+}
+
+.calendar,
+.datemenu-today-button,
+.events-button,
+.world-clocks-button,
+.weather-button {
+  color: {{fg}};
+  background-color: {{field}};
+  border-radius: {{r+4}}px;
+  box-shadow: none;
+}
+
+.datemenu-today-button,
+.events-button,
+.world-clocks-button,
+.weather-button {
+  padding: {{px:14}}px {{px:16}}px;
+}
+
+.events-button:active,
+.world-clocks-button:active,
+.weather-button:active,
+.datemenu-today-button:active {
+  background-color: {{accent/26}};
+}
+
+.events-button:hover,
+.events-button:focus,
+.world-clocks-button:hover,
+.world-clocks-button:focus,
+.weather-button:hover,
+.weather-button:focus,
+.datemenu-today-button:hover,
+.datemenu-today-button:focus {
+  background-color: {{raised}};
+  box-shadow: none !important;
+}
+
+.datemenu-today-button .day-label {
+  color: {{fg2}};
+  font-weight: normal;
+}
+
+.datemenu-today-button .date-label {
+  color: {{fg}};
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.calendar .calendar-month-header .calendar-month-label {
+  color: {{fg}};
+  font-size: 17px;
+  font-weight: 700;
+  border-radius: {{r}}px;
+}
+
+.calendar .calendar-month-header .pager-button {
+  min-width: {{px:44}}px;
+  min-height: {{px:44}}px;
+  color: {{fg2}};
+  background-color: transparent;
+  border-radius: {{pill}}px;
+}
+
+.calendar .calendar-month-header .pager-button:active,
+.calendar .calendar-month-header .pager-button:focus {
+  color: {{fg}};
+  background-color: {{raised}};
+  box-shadow: none !important;
+}
+
+.calendar .calendar-day-heading {
+  color: {{fg3}};
+  font-weight: 600;
+  background-color: transparent;
+}
+
+.calendar .calendar-week-number {
+  color: {{fg4}};
+  background-color: transparent;
+  font-weight: normal;
+}
+
+.calendar .calendar-day {
+  color: {{fg}};
+  width: {{px:44}}px;
+  height: {{px:44}}px;
+  margin: 2px;
+  background-color: transparent;
+  border: none;
+  border-radius: {{pill}}px;
+  font-weight: normal;
+}
+
+.calendar .calendar-day:active,
+.calendar .calendar-day:focus {
+  color: {{fg}};
+  background-color: {{raised}};
+  box-shadow: none !important;
+}
+
+.calendar .calendar-day:selected {
+  color: {{fg}};
+  background-color: transparent;
+  box-shadow: inset 0 0 0 2px {{accent}};
+}
+
+.calendar .calendar-day.calendar-weekend {
+  color: {{fg3}};
+}
+
+.calendar .calendar-day.calendar-other-month,
+.calendar .calendar-day.calendar-other-month.calendar-weekend {
+  color: {{fg4}};
+}
+
+.calendar .calendar-day.calendar-today,
+.calendar .calendar-day.calendar-today:selected {
+  color: {{on}} !important;
+  font-weight: 700;
+  background-color: {{accent}};
+  box-shadow: none;
+}
+
+.events-button .events-box .events-title,
+.world-clocks-button .world-clocks-header,
+.weather-button .weather-box .weather-header-box .weather-header {
+  color: {{fg2}};
+  font-weight: 600;
+}
+
+.message {
+  color: {{fg}};
+  padding: {{px:10}}px;
+  background-color: {{surface}};
+  border-radius: {{r+8}}px;
+  box-shadow: none;
+}
+
+.message:active {
+  background-color: {{raised}};
+}
+
+.message:hover,
+.message:focus {
+  background-color: {{surface}};
+  box-shadow: none !important;
+}
+
+.message:second-in-stack {
+  background-color: {{sunken}};
+}
+
+.message:lower-in-stack {
+  background-color: {{deep/70}};
+}
+
+.message .message-title {
+  color: {{fg}};
+  font-weight: 700;
+}
+
+.message .message-body,
+.message .message-secondary-bin > .event-time {
+  color: {{fg2}};
+}
+
+.message .message-header {
+  color: {{fg3}};
+  padding: 0 {{px:6}}px;
+  spacing: {{px:8}}px;
+}
+
+.message .message-header .message-close-button,
+.message .message-header .message-expand-button,
+.message-notification-group .message-collapse-button {
+  min-width: {{px:24}}px;
+  min-height: {{px:24}}px;
+  padding: {{px:8}}px;
+  background-color: {{field}};
+  border-radius: {{pill}}px;
+}
+
+.message-list-section-title,
+.message-list-clear-button {
+  color: {{fg3}};
+  font-weight: 600;
+}
+
+.message-list-clear-button {
+  background-color: {{field}};
+  border-radius: {{pill}}px;
+  padding: {{px:10}}px {{px:20}}px;
+}
+
+.message-list-clear-button:active {
+  background-color: {{accent/26}};
+}
+
+/* Il banner che compare dall'alto: una carta rialzata, larga, con l'ombra. */
+.notification-banner {
+  width: {{px:520}}px;
+  min-height: {{px:76}}px;
+  margin: {{px:10}}px;
+  background-color: {{dialog}};
+  border-radius: {{r+10}}px;
+  box-shadow: {{shadow:lg}};
+}
+
+.notification-buttons-bin .notification-button,
+.notification-button {
+  min-height: {{px:24}}px;
+  padding: {{px:12}}px {{px:18}}px;
+}
+
+.message-media-control {
+  min-width: {{px:24}}px;
+  min-height: {{px:24}}px;
+  padding: {{px:10}}px;
+  border-radius: {{pill}}px;
+}
+
+/* ── Panoramica («Home») ─────────────────────────────────────────────── */
+
+#overviewGroup {
+  background-color: {{bg}};
+}
+
+.search-entry {
+  color: {{fg}};
+  width: {{px:440}}px;
+  min-height: {{px:28}}px;
+  margin-top: {{px:14}}px;
+  margin-bottom: {{px:8}}px;
+  padding: {{px:12}}px {{px:20}}px;
+  background-color: {{field}};
+  border-radius: {{pill}}px;
+  box-shadow: none;
+}
+
+.search-entry:focus {
+  background-color: {{field}};
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+.search-entry .search-entry-icon {
+  icon-size: 20px;
+  color: {{fg3}};
+}
+
+.search-section-content {
+  background-color: {{surface}};
+  border-radius: {{radius}}px;
+}
+
+.search-statustext {
+  color: {{fg3}};
+}
+
+.workspace-background {
+  border-radius: {{radius+4}}px;
+  box-shadow: {{shadow:md}};
+}
+
+.workspace-thumbnails {
+  spacing: {{px:12}}px;
+}
+
+.workspace-thumbnails .workspace-thumbnail {
+  border-radius: {{r}}px;
+  background-color: {{field}};
+}
+
+.workspace-thumbnail-indicator {
+  border-radius: {{r}}px;
+  border: 3px solid {{accent}};
+  box-shadow: none;
+}
+
+/* Finestre nella panoramica: la didascalia è una pillola, la X è un bersaglio vero (44px). Col dito, la X compare
+   tenendo premuto su una finestra (è il gesto di GNOME). */
+.window-caption {
+  color: {{fg}};
+  background-color: {{dialog}};
+  border-radius: {{pill}}px;
+  box-shadow: {{shadow:sm}};
+  padding: {{px:7}}px {{px:16}}px;
+  font-weight: 600;
+  spacing: {{px:6}}px;
+}
+
+.window-close,
+.screenshot-ui-close-button {
+  width: {{px:44}}px;
+  height: {{px:44}}px;
+  padding: {{px:6}}px;
+  color: {{fg}};
+  background-color: {{dialog}};
+  border: none;
+  border-radius: {{pill}}px;
+  box-shadow: {{shadow:sm}};
+}
+
+.window-close:active,
+.screenshot-ui-close-button:active {
+  background-color: {{red}};
+  color: {{deep}};
+}
+
+.window-close:hover,
+.screenshot-ui-close-button:hover {
+  background-color: {{raised}};
+}
+
+.window-close StIcon,
+.screenshot-ui-close-button StIcon {
+  icon-size: 26px;
+}
+
+/* Griglia delle app: tessere grandi e morbide, la selezione è un riempimento */
+.icon-grid {
+  row-spacing: {{px:14}}px;
+  column-spacing: {{px:14}}px;
+  max-row-spacing: {{px:40}}px;
+  max-column-spacing: {{px:40}}px;
+  page-padding-top: {{px:28}}px;
+  page-padding-bottom: {{px:28}}px;
+}
+
+.overview-tile,
+.grid-search-result {
+  color: {{fg}};
+  padding: {{px:14}}px;
+  background-color: transparent;
+  border-radius: {{r+10}}px;
+  box-shadow: none;
+  transition-duration: {{ms:140}};
+}
+
+.overview-tile:hover,
+.grid-search-result:hover,
+.overview-tile:selected,
+.grid-search-result:selected,
+.overview-tile:highlighted,
+.grid-search-result:highlighted {
+  color: {{fg}};
+  background-color: {{field/80}};
+}
+
+.overview-tile:active,
+.grid-search-result:active {
+  color: {{fg}};
+  background-color: {{accent/26}};
+}
+
+.overview-tile:focus,
+.grid-search-result:focus {
+  color: {{fg}};
+  background-color: {{field/80}};
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+.overview-tile:drop,
+.grid-search-result:drop {
+  background-color: {{accent/22}};
+  box-shadow: inset 0 0 0 2px {{accent}};
+}
+
+.overview-tile .overview-icon.overview-icon-with-label > StBoxLayout,
+.grid-search-result .overview-icon.overview-icon-with-label > StBoxLayout {
+  spacing: {{px:8}}px;
+}
+
+.app-folder {
+  color: {{fg}};
+  background-color: {{surface}};
+  border-radius: {{radius}}px;
+}
+
+.app-folder:hover,
+.app-folder:focus,
+.app-folder:selected {
+  background-color: {{raised}};
+}
+
+.app-folder:active {
+  background-color: {{accent/26}};
+}
+
+.app-folder-dialog {
+  color: {{fg}};
+  background-color: {{dialog}};
+  border-radius: {{radius+16}}px;
+  box-shadow: {{shadow:lg}};
+}
+
+.app-folder-dialog .folder-name-container .folder-name-entry {
+  border-radius: {{r}}px;
+}
+
+.app-well-app-running-dot,
+.app-grid-running-dot {
+  width: {{px:6}}px;
+  height: {{px:6}}px;
+  border-radius: {{pill}}px;
+  background-color: {{accent}};
+}
+
+.page-indicator {
+  spacing: {{px:6}}px;
+}
+
+.page-indicator .page-indicator-icon {
+  width: {{px:8}}px;
+  height: {{px:8}}px;
+  border-radius: {{pill}}px;
+  background-color: {{fg4}};
+}
+
+.page-indicator:active .page-indicator-icon,
+.page-indicator-icon:active {
+  background-color: {{fg}};
+}
+
+.page-navigation-arrow {
+  min-width: {{px:44}}px;
+  min-height: {{px:44}}px;
+  background-color: {{field}};
+  border-radius: {{pill}}px;
+}
+
+/* ── Dash (panoramica) e Shelf (estensione): lo stesso dock ──────────── */
+
+#dash .dash-background {
+  background-color: {{surface}};
+  border: 1px solid {{line}};
+  border-radius: {{radius+10}}px;
+  box-shadow: {{shadow:md}};
+  padding: {{px:10}}px {{px:14}}px;
+}
+
+/* Ogni icona sta su una tessera piena: si vede dove toccare anche senza conoscere l'icona. Lo stile sta
+   sull'icona (.overview-icon) e non sul contenitore, che comprende anche il puntino «app aperta». */
+#dash .dash-item-container .overview-tile .overview-icon,
+#dash .dash-item-container .show-apps .overview-icon {
+  padding: {{px:6}}px;
+  border-radius: {{r+8}}px;
+  background-color: {{field}};
+}
+
+#dash .dash-item-container .overview-tile:active .overview-icon,
+#dash .dash-item-container .show-apps:active .overview-icon {
+  background-color: {{accent/30}};
+}
+
+#dash .dash-item-container .overview-tile:focus .overview-icon,
+#dash .dash-item-container .show-apps:focus .overview-icon {
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+#dash .dash-item-container .show-apps:checked .overview-icon {
+  background-color: {{accent}};
+  color: {{on}};
+}
+
+#dash .dash-separator {
+  width: 2px;
+  margin: {{px:10}}px {{px:8}}px;
+  border-radius: {{pill}}px;
+  background-color: {{line}};
+}
+
+.dash-label {
+  color: {{fg}};
+  background-color: {{dialog}};
+  border-radius: {{pill}}px;
+  box-shadow: {{shadow:md}};
+  padding: {{px:8}}px {{px:16}}px;
+  font-weight: 600;
+}
+
+/* ── OSD, selettore finestre, dialoghi ───────────────────────────────── */
+
+.osd-window {
+  color: {{fg}};
+  padding: {{px:18}}px {{px:28}}px;
+  border-radius: {{radius+4}}px;
+  background-color: {{dialog}};
+  box-shadow: {{shadow:lg}};
+  spacing: {{px:14}}px;
+}
+
+.osd-window .level {
+  min-width: {{px:200}}px;
+  height: {{px:10}}px;
+  -barlevel-height: {{px:10}}px;
+  -barlevel-background-color: {{raised}};
+  -barlevel-active-background-color: {{accent}};
+  -barlevel-overdrive-color: {{red}};
+  border-radius: {{pill}}px;
+}
+
+.osd-window StIcon {
+  icon-size: 36px;
+}
+
+.switcher-list {
+  padding: {{px:16}}px;
+  background-color: {{dialog}};
+  border-radius: {{radius+10}}px;
+  box-shadow: {{shadow:lg}};
+}
+
+.switcher-list .item-box {
+  color: {{fg2}};
+  padding: {{px:10}}px;
+  border-radius: {{r+8}}px;
+  background-color: transparent;
+  box-shadow: none;
+  transition-duration: {{ms:120}};
+}
+
+.switcher-list .item-box:hover,
+.switcher-list .item-box:selected {
+  color: {{fg}};
+  background-color: {{field}};
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}};
+}
+
+.switcher-list .separator {
+  background-color: {{line}};
+}
+
+.modal-dialog {
+  color: {{fg}};
+  padding: {{px:28}}px;
+  spacing: {{px:22}}px;
+  background-color: {{dialog}};
+  border-radius: {{radius+6}}px;
+  box-shadow: {{shadow:lg}};
+}
+
+.modal-dialog .modal-dialog-content-box {
+  spacing: {{px:18}}px;
+}
+
+.modal-dialog .modal-dialog-button-box {
+  spacing: {{px:12}}px;
+  padding-top: {{px:8}}px;
+}
+
+.modal-dialog .modal-dialog-button-box .modal-dialog-button {
+  min-height: {{px:24}}px;
+  padding: {{px:14}}px {{px:26}}px;
+  border-radius: {{r}}px;
+  font-weight: 600;
+  color: {{fg}};
+  background-color: {{field}};
+}
+
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:active {
+  background-color: {{accent/30}};
+}
+
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:hover {
+  background-color: {{raised}};
+}
+
+.modal-dialog .modal-dialog-button-box .modal-dialog-button.default:hover,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:default:hover {
+  background-color: {{hi}};
+}
+
+.modal-dialog .modal-dialog-button-box .modal-dialog-button.default:active,
+.modal-dialog .modal-dialog-button-box .modal-dialog-button:default:active {
+  background-color: {{lo}};
+}
+
+.message-dialog-title {
+  color: {{fg}};
+  font-weight: 700;
+}
+
+.message-dialog-description {
+  color: {{fg2}};
+}
+
+.dialog-list-box,
+.end-session-dialog-list,
+.audio-selection-box {
+  border-radius: {{r}}px;
+}
+
+.end-session-dialog-session-list {
+  spacing: {{px:12}}px;
+}
+
+.tile-preview {
+  background-color: {{accent/14}};
+  border: 3px solid {{accent}};
+  border-radius: {{radius}}px;
+}
+
+.resize-popup {
+  color: {{fg}};
+  background-color: {{dialog}};
+  border-radius: {{pill}}px;
+  box-shadow: {{shadow:md}};
+  padding: {{px:8}}px {{px:18}}px;
+}
+
+.workspace-switcher {
+  background-color: {{dialog}};
+  border-radius: {{radius}}px;
+  box-shadow: {{shadow:lg}};
+}
+
+.ws-switcher-indicator {
+  background-color: {{fg4}};
+  border-radius: {{pill}}px;
+  width: {{px:12}}px;
+  height: {{px:12}}px;
+}
+
+.ws-switcher-indicator.active {
+  background-color: {{accent}};
+  width: {{px:28}}px;
+}
+
+/* ── Barre di scorrimento ────────────────────────────────────────────── */
+
+StScrollBar {
+  -st-hfade-offset: 0px;
+}
+
+StScrollBar StBin#trough {
+  background-color: transparent;
+  border-radius: {{pill}}px;
+}
+
+StScrollBar StButton#vhandle,
+StScrollBar StButton#hhandle {
+  background-color: {{fg4}};
+  border-radius: {{pill}}px;
+  border: none;
+  margin: 0 3px;
+}
+
+StScrollBar StButton#vhandle:active,
+StScrollBar StButton#hhandle:active {
+  background-color: {{accent}};
+}
+
+/* ── Tastiera su schermo ─────────────────────────────────────────────────
+   Le dimensioni dei tasti le decide la Shell (un terzo dello schermo in orizzontale): qui si danno colore, forma
+   e feedback. Il tasto premuto si illumina d'accento, perché sul vetro non c'è altro modo di sentire che ha risposto. */
+
+#keyboard {
+  background-color: {{sidebar}};
+  box-shadow: {{shadow:lg}};
+  padding: {{px:4}}px 0 {{px:6}}px 0;
+}
+
+#keyboard .page-indicator {
+  padding: {{px:8}}px;
+}
+
+.key-container {
+  padding: {{px:5}}px;
+  spacing: {{px:6}}px;
+}
+
+.keyboard-key {
+  font-size: 22px;
+  font-weight: 600;
+  color: {{fg}};
+  background-color: {{key}};
+  border: none;
+  border-radius: {{r}}px;
+  box-shadow: 0 2px 0 {{shade/30}};
+  transition-duration: {{ms:70}};
+}
+
+.keyboard-key:hover {
+  color: {{fg}};
+  background-color: {{key}};
+}
+
+.keyboard-key:focus {
+  color: {{fg}};
+  background-color: {{key}};
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+.keyboard-key:active,
+.keyboard-key:active:hover,
+.keyboard-key:active:focus {
+  color: {{on}};
+  background-color: {{accent}};
+  box-shadow: none;
+}
+
+.keyboard-key:checked,
+.keyboard-key:checked:hover {
+  color: {{fg}};
+  background-color: {{accent/40}};
+}
+
+.keyboard-key.default-key,
+.keyboard-key.default-key:hover {
+  color: {{fg2}};
+  background-color: {{key2}};
+}
+
+.keyboard-key.default-key:active,
+.keyboard-key.default-key:active:hover {
+  color: {{on}};
+  background-color: {{accent}};
+}
+
+.keyboard-key.default-key:checked,
+.keyboard-key.default-key:checked:hover {
+  color: {{fg}};
+  background-color: {{accent/40}};
+}
+
+.keyboard-key.default-key:latched {
+  color: {{on}};
+  background-color: {{accent}};
+}
+
+.keyboard-key StIcon {
+  icon-size: 26px;
+}
+
+.keyboard-subkeys-boxpointer {
+  -arrow-border-radius: {{r+8}}px;
+  -arrow-background-color: {{dialog}};
+  -arrow-border-width: 0;
+  -arrow-border-color: {{line}};
+  -arrow-base: 24px;
+  -arrow-rise: 12px;
+  -boxpointer-gap: 6px;
+  -arrow-box-shadow: {{shadow:lg}};
+  border-radius: {{r+8}}px;
+}
+
+.keyboard-subkeys-boxpointer .key-container {
+  padding: {{px:12}}px;
+  spacing: {{px:8}}px;
+}
+
+.emoji-page .keyboard-key {
+  background-color: transparent;
+}
+
+.emoji-panel .keyboard-key:latched {
+  background-color: {{accent}};
+}
+
+.word-suggestions {
+  color: {{fg}};
+  spacing: {{px:10}}px;
+  min-height: {{px:24}}px;
+  padding: {{px:10}}px {{px:14}}px;
+}
+
+.word-suggestions StButton {
+  min-width: {{px:56}}px;
+  margin: 0 2px;
+  padding: {{px:10}}px {{px:22}}px;
+  color: {{fg}};
+  background-color: {{field}};
+  border-radius: {{pill}}px;
+  box-shadow: none;
+}
+
+.word-suggestions StButton:active {
+  color: {{on}};
+  background-color: {{accent}};
+}
+
+.word-suggestions StButton:focus {
+  box-shadow: inset 0 0 0 {{frame}}px {{accent}} !important;
+}
+
+.candidate-box {
+  padding: {{px:10}}px {{px:14}}px;
+  border-radius: {{r}}px;
+}
+
+.candidate-box:selected,
+.candidate-box:hover {
+  background-color: {{accent/30}};
+  color: {{fg}};
+}
+
+.candidate-page-button {
+  min-width: {{px:44}}px;
+  min-height: {{px:44}}px;
+}
+
+/* ── Schermata di blocco ─────────────────────────────────────────────── */
+
+.unlock-dialog-clock-time {
+  font-size: 96px;
+  font-weight: 200;
+  color: #ffffff;
+}
+
+.unlock-dialog-clock-date {
+  font-size: 20px;
+  font-weight: 600;
+  color: {{fg2}};
+}
+
+.login-dialog-prompt-entry,
+.unlock-dialog .login-dialog-prompt-entry {
+  min-height: {{px:24}}px;
+  border-radius: {{r}}px;
+}
+
+.login-dialog-button.a11y-button,
+.login-dialog-button.cancel-button,
+.login-dialog-button.switch-user-button,
+.login-dialog-button.login-dialog-session-list-button {
+  min-width: {{px:24}}px;
+  min-height: {{px:24}}px;
+  padding: {{px:12}}px;
+  border-radius: {{pill}}px;
+}
+
+/* ── Cattura schermo ─────────────────────────────────────────────────── */
+
+.screenshot-ui-panel {
+  background-color: {{dialog}};
+  border-radius: {{radius+4}}px;
+  box-shadow: {{shadow:lg}};
+  padding: {{px:12}}px;
+}
+
+.screenshot-ui-type-button,
+.screenshot-ui-show-pointer-button,
+.screenshot-ui-shot-cast-button {
+  min-width: {{px:24}}px;
+  min-height: {{px:24}}px;
+  padding: {{px:12}}px;
+  border-radius: {{r}}px;
+}
+
+.screenshot-ui-type-button:checked,
+.screenshot-ui-show-pointer-button:checked,
+.screenshot-ui-shot-cast-button:checked {
+  background-color: {{accent}};
+  color: {{on}};
+}
+
+.screenshot-ui-capture-button .screenshot-ui-capture-button-circle {
+  background-color: {{accent}};
+  width: {{px:56}}px;
+  height: {{px:56}}px;
+}
+
+.screenshot-ui-tooltip {
+  background-color: {{dialog}};
+  color: {{fg}};
+  border-radius: {{pill}}px;
+  padding: {{px:6}}px {{px:14}}px;
+}
+
+/* ── Raggi ──────────────────────────────────────────────────────────────
+   Il CSS di default arrotonda a modo suo; qui si portano i controlli generici al raggio scelto, così cambiando
+   «Angoli» nelle impostazioni cambia tutto insieme. Restano tondi di proposito gli avatar, i cursori e le pillole. */
+
+.app-folder-dialog .overview-tile,
+.app-folder-dialog .grid-search-result,
+.audio-device-selection-dialog .audio-selection-box .audio-selection-device,
+.prompt-dialog .prompt-dialog-error-label,
+.prompt-dialog .prompt-dialog-info-label,
+.prompt-dialog .prompt-dialog-null-label,
+.end-session-dialog .end-session-dialog-battery-warning,
+.conflicting-session-dialog-content .conflicting-session-dialog-desc-warning,
+.parental-controls-shield .parental-controls-shield-button,
+.events-button .events-box .events-list .event-box,
+.search-provider-icon {
+  border-radius: {{r}}px;
+}
+
+.run-dialog,
+.prompt-dialog,
+.message-view .message,
+.screenshot-ui-panel {
+  border-radius: {{radius}}px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Estensione Touch Shell
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* La barretta Home: un filo al centro del bordo inferiore. Un anello sottile del colore opposto la tiene
+   leggibile su qualunque sfondo (una finestra bianca o nera). */
+.touch-pill {
+  background-color: {{fg/82}};
+  border-radius: {{pill}}px;
+  box-shadow: 0 0 0 1px {{bg/60}};
+  transition-duration: {{ms:160}};
+}
+
+.touch-pill.pressed {
+  background-color: {{accent}};
+}
+
+/* Lo Shelf: il dash vero di GNOME, più un'isola con le azioni (tastiera) */
+.touch-shelf {
+  spacing: {{px:12}}px;
+}
+
+.touch-shelf-actions {
+  padding: {{px:10}}px;
+  spacing: {{px:6}}px;
+  background-color: {{surface}};
+  border: 1px solid {{line}};
+  border-radius: {{radius+10}}px;
+  box-shadow: {{shadow:md}};
+}
+
+.touch-shelf-button {
+  min-width: {{px:76}}px;
+  min-height: {{px:76}}px;
+  padding: {{px:4}}px;
+  color: {{fg}};
+  border-radius: {{r+8}}px;
+  background-color: transparent;
+  transition-duration: {{ms:120}};
+}
+
+.touch-shelf-button StIcon {
+  icon-size: 32px;
+}
+
+.touch-shelf-button:active {
+  background-color: {{accent/26}};
+}
+
+.touch-shelf-button:checked {
+  background-color: {{accent}};
+  color: {{on}};
+}
+
+/* La scheda che compare mentre si scorre da un'app all'altra: icona e nome dell'app di destinazione */
+.touch-flip {
+  padding: {{px:12}}px {{px:22}}px {{px:12}}px {{px:14}}px;
+  spacing: {{px:12}}px;
+  background-color: {{dialog}};
+  border-radius: {{pill}}px;
+  box-shadow: {{shadow:md}};
+  color: {{fg}};
+  font-weight: 600;
+}

@@ -1,0 +1,1 @@
+{ "uuid": "shot-test@touch", "name": "Shot test", "description": "Solo per i test headless di Touch OS", "shell-version": ["50"], "version": 1 }

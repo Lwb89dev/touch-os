@@ -1,0 +1,24 @@
+# Impostazioni del desktop applicate da install.sh (sempre).
+# Formato: schema | chiave | valore (testo GVariant, come per `gsettings set`)
+# Le righe vuote e quelle che iniziano con # sono ignorate. Se uno schema non esiste
+# (app non installata) la riga viene saltata. Prima di cambiare ogni chiave l'installer
+# salva il valore originale: ./uninstall.sh lo rimette.
+# (Schema di colori, accento, icone e dimensione del testo li imposta l'installer a parte: sono opzioni.)
+
+# Con un dito si sfiora lo schermo di continuo: l'angolo attivo in alto a sinistra aprirebbe la panoramica a caso
+org.gnome.desktop.interface | enable-hot-corners | false
+org.gnome.desktop.interface | enable-animations  | true
+
+# Orologio: giorno e data nella barra
+org.gnome.desktop.interface | clock-show-weekday | true
+org.gnome.desktop.interface | clock-show-date    | true
+
+# Pulsanti finestra: tre cerchi a destra, da 40px
+org.gnome.desktop.wm.preferences | button-layout | ':minimize,maximize,close'
+
+# Il tiling ai bordi (trascinando una finestra, o con le dita) è il modo di affiancare due app
+org.gnome.mutter | edge-tiling        | true
+org.gnome.mutter | center-new-windows | true
+
+# Un convertibile ruota lo schermo da solo: il blocco della rotazione è un tasto nelle impostazioni rapide
+org.gnome.settings-daemon.peripherals.touchscreen | orientation-lock | false

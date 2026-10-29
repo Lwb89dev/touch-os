@@ -1,0 +1,18 @@
+# Generati dall'installer o dal banco di prova, mai a mano
+Tela-*/
+theme/Touch/gtk-4.0/touch.css
+theme/Touch/gtk-3.0/touch-common.css
+theme/Touch/gtk-3.0/touch-light.css
+theme/Touch/gtk-3.0/touch-dark.css
+theme/Touch/gnome-shell/gnome-shell-dark.css
+theme/Touch/gnome-shell/gnome-shell-light.css
+theme/Touch/extras/
+# adw-gtk3 e libadwaita.css: scaricati dall'installer
+theme/Touch/gtk-3.0/adw-gtk3*.css
+theme/Touch/gtk-3.0/assets/
+theme/Touch/gtk-4.0/libadwaita*.css
+theme/Touch/gtk-4.0/assets/
+extension/*/schemas/gschemas.compiled
+# appunti e catture di lavoro
+.claude/
+*.log
